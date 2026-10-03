@@ -16,8 +16,6 @@ import SearchBar from '../../../components/SearchBar'
 const index = () => {
 
   const router = useRouter()
-  const [filter, setFilter] = useState<TaskFilter>("all")
-  const [selector, setSelector] = useState(false)
   const [data, setData] = useState<Task[] | null>(null)
   const [filteredTasks, setFilteredTasks] = useState<Task[] | null>(null)
   const [loading, setLoading] = useState(true)
@@ -52,7 +50,7 @@ const index = () => {
         setFilteredTasks(filteredData)
       }
     }
-  }, [filter, data])
+  }, [data,searchText])
 
   useEffect(() => {
     const filtered = data?.filter((i) => i.title.toLowerCase().includes(searchText))
@@ -99,7 +97,7 @@ const index = () => {
             <TaskCard
               key={item.id}
               title={item.title}
-              onLongPress={(selector) => setSelector(selector)}
+              onLongPress={(selector) => console.log("djfk")}
               time={item.time}
               date={item.date}
               id={item.id}
