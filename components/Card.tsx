@@ -9,6 +9,7 @@ import {
   Pressable,
 } from "react-native";
 import { scale, verticalScale } from "../utils/styling";
+import { MoreVertical } from "lucide-react-native";
 
 type TaskCardProps = {
   id:string;
@@ -27,6 +28,8 @@ export default function TaskCard({
   onLongPress,
   onPress,
 }: TaskCardProps) {
+ 
+
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -34,7 +37,8 @@ export default function TaskCard({
       onLongPress={()=> onLongPress(true)}
       style={[styles.card]}
     >
-     
+
+
 
       {/* Content */}
       <View style={styles.content}>

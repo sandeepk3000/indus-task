@@ -1,8 +1,6 @@
 import React, { forwardRef } from "react";
-import {
-  View,
-  StyleSheet,
-} from "react-native";
+import { View, StyleSheet } from "react-native";
+
 import {
   actions,
   RichEditor,
@@ -20,6 +18,7 @@ const Editor = forwardRef<RichEditor, EditorProps>(
   ({ content, onContentChange }, ref) => {
     return (
       <>
+        {/* Editor */}
         <View style={styles.editorContainer}>
           <RichEditor
             ref={ref}
@@ -27,12 +26,26 @@ const Editor = forwardRef<RichEditor, EditorProps>(
             placeholder="Write your task description..."
             useContainer={true}
             initialContentHTML={content}
+
+            editorStyle={{
+              backgroundColor: Colors.dark.background.card,
+              color: "white",
+              placeholderColor: "white",
+
+              contentCSSText: `
+                padding: 12px;
+                font-size: 16px;
+                color: white;
+              `,
+            }}
+
             onChange={(descriptionText: string) => {
               onContentChange(descriptionText);
             }}
           />
         </View>
 
+        {/* Toolbar */}
         <View style={styles.toolbarContainer}>
           <RichToolbar
             editor={ref}
@@ -68,13 +81,23 @@ const styles = StyleSheet.create({
 
   toolbarContainer: {
     height: 55,
+    borderRadius: 10,
+    overflow:"hidden",
+    shadowColor: Colors.dark.text.muted,
+    shadowOffset: {
+      width: 0,
+      height: -3,
+    },
+    
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+
+    // Android
+    elevation: 8,
   },
 
   toolbar: {
     flex: 1,
-    borderTopWidth: 1,
-    borderColor: Colors.dark.border.divider,
-    borderRadius: 10,
-    backgroundColor: Colors.dark.background.surface,
+    backgroundColor: Colors.dark.background.card,
   },
 });

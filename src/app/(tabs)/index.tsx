@@ -10,8 +10,9 @@ import { Plus } from 'lucide-react-native'
 import { Colors } from '../../../theme/colors'
 import { scale, verticalScale } from '../../../utils/styling'
 import { generateDate, generateTime } from '../../../utils/date'
-import { getAllTasks } from '../../../hooks/useTask'
+import { deleteTask, getAllTasks } from '../../../hooks/useTask'
 import SearchBar from '../../../components/SearchBar'
+import TaskActionMenu from '../../../components/TaskActionMenu'
 
 const index = () => {
 
@@ -20,6 +21,8 @@ const index = () => {
   const [filteredTasks, setFilteredTasks] = useState<Task[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [searchText, setSearchText] = useState("")
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState("")
   useEffect(() => {
     // Replace with your actual function to fetch tasks
     if (data) {
@@ -50,7 +53,7 @@ const index = () => {
         setFilteredTasks(filteredData)
       }
     }
-  }, [data,searchText])
+  }, [data, searchText])
 
   useEffect(() => {
     const filtered = data?.filter((i) => i.title.toLowerCase().includes(searchText))
@@ -58,19 +61,33 @@ const index = () => {
       setFilteredTasks(filtered)
     }
   }, [searchText])
+  const getTasks = async () => {
+    setLoading(true)
+    try {
+      const tasks = await getAllTasks()
+      if (tasks) {
+        setData(tasks)
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+
+  }
+  const handleDelete = async () => {
+    try {
+      await deleteTask(selectedTaskId)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setSelectedTaskId("")
+      getTasks()
+    }
+  }
   useFocusEffect(
     useCallback(() => {
-      setLoading(true)
-      getAllTasks()
-        .then((task) =>
-
-          setData(task)
-        ).catch((error) => {
-          console.log(error)
-        }
-        ).finally(() => {
-          setLoading(false)
-        })
+      getTasks()
     }, [])
   )
 
@@ -82,6 +99,8 @@ const index = () => {
     );
     if (newData) setData(newData)
   }
+
+
   return (
     <View style={styles.container}>
 
@@ -90,22 +109,38 @@ const index = () => {
 
         {loading ? (
           <Text style={{
-            color: "white"
+            color: "white",
+           
           }}>Loading...</Text>
         ) : (
           filteredTasks?.map((item) => (
             <TaskCard
               key={item.id}
               title={item.title}
-              onLongPress={(selector) => console.log("djfk")}
+              onLongPress={(selector) => {
+                setMenuVisible(selector)
+                setSelectedTaskId(item.id)
+              }}
               time={item.time}
               date={item.date}
               id={item.id}
               onPress={() => router.push(`/task/edit/${item.id}`)}
             />
           )))}
+
       </ScreenWrapper>
 
+      <TaskActionMenu
+        visible={menuVisible}
+        onClose={() => setMenuVisible(false)}
+        onPin={() => console.log("pin")}
+        onLock={() => console.log("lock")}
+        onDuplicate={() => console.log("duplicate")}
+        onWidget={() => console.log("widget")}
+        onMove={() => console.log("move")}
+        onShare={() => console.log("share")}
+        onDelete={() => handleDelete()}
+      />
       <Button
         style={styles.button}
         onPress={() => router.push("/(tabs)/create")}
